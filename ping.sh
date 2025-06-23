@@ -42,3 +42,45 @@ else
     echo "❌ Server $SERVER is DOWN"
 fi
 
+echo ""
+echo ""
+
+# Thresholds (adjust as needed)
+CPU_WARN_THRESHOLD=1.5  # Load average threshold
+MEM_WARN_THRESHOLD=80   # % memory usage
+
+echo "📊 System Resource Report - $(date)"
+echo "--------------------------------------"
+
+# CPU Load (1, 5, 15 min)
+LOAD=$(uptime | awk -F 'load average: ' '{ print $2 }')
+LOAD_1MIN=$(echo $LOAD | cut -d',' -f1)
+
+echo "🧠 CPU Load Average (1, 5, 15 min): $LOAD"
+
+# Check if load is too high (1-minute average)
+LOAD_VALUE=$(printf "%.1f\n" "$LOAD_1MIN")
+if (( $(echo "$LOAD_VALUE > $CPU_WARN_THRESHOLD" | bc -l) )); then
+    echo "⚠️  High CPU Load: $LOAD_VALUE (Threshold: $CPU_WARN_THRESHOLD)"
+else
+    echo "✅ CPU Load is normal"
+fi
+
+echo "--------------------------------------"
+
+# RAM Usage
+MEM_INFO=$(free -m | grep Mem)
+TOTAL_MEM=$(echo $MEM_INFO | awk '{print $2}')
+USED_MEM=$(echo $MEM_INFO | awk '{print $3}')
+MEM_PERCENT=$(( USED_MEM * 100 / TOTAL_MEM ))
+
+echo "💾 RAM Usage: $USED_MEM MiB / $TOTAL_MEM MiB (${MEM_PERCENT}%)"
+
+if [ "$MEM_PERCENT" -ge "$MEM_WARN_THRESHOLD" ]; then
+    echo "⚠️  High Memory Usage: ${MEM_PERCENT}% (Threshold: $MEM_WARN_THRESHOLD%)"
+else
+    echo "✅ Memory usage is normal"
+fi
+
+echo "--------------------------------------"
+

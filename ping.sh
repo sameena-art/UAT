@@ -84,3 +84,16 @@ fi
 
 echo "--------------------------------------"
 
+#!/bin/bash
+
+echo "👥 Currently Logged-In Users on $(hostname)"
+echo "--------------------------------------------"
+
+# List currently logged-in users with their login info
+who
+
+# Optionally show user sessions with more detail
+echo ""
+echo "📋 Detailed Session Info:"
+w
+

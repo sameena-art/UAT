@@ -95,5 +95,3 @@ who
 # Optionally show user sessions with more detail
 echo ""
 echo "📋 Detailed Session Info:"
-w
-

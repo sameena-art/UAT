@@ -12,4 +12,16 @@ if [ $? -eq 0 ]; then
 else
     echo "❌ Server $SERVER is DOWN"
 fi
+THRESHOLD=80
 
+# Get disk usage excluding tmpfs and udev
+df -h --output=target,pcent | grep -vE '^Mounted|tmpfs|udev' | while read line; do
+    MOUNT=$(echo $line | awk '{print $1}')
+    USAGE=$(echo $line | awk '{print $2}' | tr -d '%')
+
+    if [ "$USAGE" -ge "$THRESHOLD" ]; then
+        echo "⚠️ Warning: Disk usage on $MOUNT is at ${USAGE}%"
+    else
+        echo "✅ OK: Disk usage on $MOUNT is at ${USAGE}%"
+    fi
+done
